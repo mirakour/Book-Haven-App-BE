@@ -1,5 +1,9 @@
 import app from "./app.js";
 import db from "./db/client.js";
+import booksRouter from "./routes/books.js";
+
+
+app.use("/books", booksRouter);
 
 const PORT = process.env.PORT || 3000;
 

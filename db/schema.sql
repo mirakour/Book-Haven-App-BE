@@ -1,8 +1,10 @@
--- Reset tables if they already exist
-DROP TABLE IF EXISTS reviews;
-DROP TABLE IF EXISTS orders;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS books;
+-- Drop all tables to reset
+DROP TABLE IF EXISTS order_books CASCADE;
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS orders CASCADE;
+DROP TABLE IF EXISTS tasks CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS books CASCADE;
 
 -- Users table
 CREATE TABLE users (
@@ -35,4 +37,20 @@ CREATE TABLE reviews (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
   rating INTEGER CHECK (rating BETWEEN 1 AND 5)
+);
+
+-- Tasks table
+CREATE TABLE tasks (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  done BOOLEAN DEFAULT false
+);
+
+-- Order_Books join table
+CREATE TABLE order_books (
+  id SERIAL PRIMARY KEY,
+  order_id INTEGER REFERENCES orders(id) ON DELETE CASCADE,
+  book_id INTEGER REFERENCES books(id),
+  quantity INTEGER NOT NULL DEFAULT 1
 );

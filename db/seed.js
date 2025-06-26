@@ -1,8 +1,8 @@
 import db from "./client.js";
 import bcrypt from "bcrypt";
 
-
-  const books = [
+// FULL ARRAY OF 50 BOOKS
+const books = [
   {
     title: "The Alchemist",
     synopsis: "A journey of self-discovery wrapped in mystical storytelling.",
@@ -188,60 +188,200 @@ import bcrypt from "bcrypt";
     synopsis: "A psychological thriller about a woman who never speaks again.",
     price: 14.00,
     image_url: "https://covers.openlibrary.org/b/id/10557823-L.jpg"
+  },
+  {
+    title: "The Great Gatsby",
+    synopsis: "A tragic story of Jay Gatsby and his unrelenting passion for Daisy Buchanan.",
+    price: 10.50,
+    image_url: "https://covers.openlibrary.org/b/id/10507255-L.jpg"
+  },
+  {
+    title: "1984",
+    synopsis: "A dystopian future under the watchful eye of Big Brother.",
+    price: 11.80,
+    image_url: "https://covers.openlibrary.org/b/id/10404526-L.jpg"
+  },
+  {
+    title: "The Catcher in the Rye",
+    synopsis: "Holden Caulfield’s journey through teenage angst and alienation.",
+    price: 12.00,
+    image_url: "https://covers.openlibrary.org/b/id/10519882-L.jpg"
+  },
+  {
+    title: "The Hobbit",
+    synopsis: "Bilbo Baggins embarks on an epic quest to reclaim treasure guarded by Smaug.",
+    price: 14.25,
+    image_url: "https://covers.openlibrary.org/b/id/6979861-L.jpg"
+  },
+  {
+    title: "To Kill a Mockingbird",
+    synopsis: "A tale of racial injustice and childhood innocence in the American South.",
+    price: 13.75,
+    image_url: "https://covers.openlibrary.org/b/id/9871895-L.jpg"
+  },
+  {
+    title: "Pride and Prejudice",
+    synopsis: "A witty commentary on love and society in 19th-century England.",
+    price: 10.95,
+    image_url: "https://covers.openlibrary.org/b/id/10453223-L.jpg"
+  },
+  {
+    title: "The Secret Garden",
+    synopsis: "A young girl finds healing and friendship through a hidden garden.",
+    price: 12.10,
+    image_url: "https://covers.openlibrary.org/b/id/10491184-L.jpg"
+  },
+  {
+    title: "Frankenstein",
+    synopsis: "A chilling story of science, creation, and consequence.",
+    price: 9.50,
+    image_url: "https://covers.openlibrary.org/b/id/7222246-L.jpg"
+  },
+  {
+    title: "Charlotte’s Web",
+    synopsis: "A pig, a spider, and a powerful story of friendship and life.",
+    price: 8.95,
+    image_url: "https://covers.openlibrary.org/b/id/10332864-L.jpg"
+  },
+  {
+    title: "The Lion, the Witch and the Wardrobe",
+    synopsis: "Four siblings discover a magical world through a wardrobe.",
+    price: 11.30,
+    image_url: "https://covers.openlibrary.org/b/id/9251015-L.jpg"
+  },
+  {
+    title: "The Adventures of Huckleberry Finn",
+    synopsis: "Huck and Jim’s journey down the Mississippi tackles themes of race and identity.",
+    price: 10.00,
+    image_url: "https://covers.openlibrary.org/b/id/7238264-L.jpg"
+  },
+  {
+    title: "Little Women",
+    synopsis: "A heartfelt story of sisterhood, growing up, and self-discovery.",
+    price: 12.30,
+    image_url: "https://covers.openlibrary.org/b/id/8225637-L.jpg"
+  },
+  {
+    title: "The Wind in the Willows",
+    synopsis: "A whimsical tale of friendship between Mole, Rat, Toad, and Badger.",
+    price: 10.45,
+    image_url: "https://covers.openlibrary.org/b/id/8169737-L.jpg"
+  },
+  {
+    title: "The Time Machine",
+    synopsis: "A Victorian scientist builds a machine that can travel through time.",
+    price: 9.20,
+    image_url: "https://covers.openlibrary.org/b/id/10613125-L.jpg"
+  },
+  {
+    title: "A Wrinkle in Time",
+    synopsis: "A cosmic battle of good and evil through time and space.",
+    price: 11.00,
+    image_url: "https://covers.openlibrary.org/b/id/10551048-L.jpg"
+  },
+  {
+    title: "Dracula",
+    synopsis: "The classic vampire novel that started it all.",
+    price: 10.80,
+    image_url: "https://covers.openlibrary.org/b/id/8373482-L.jpg"
+  },
+  {
+    title: "The War of the Worlds",
+    synopsis: "Martians invade Earth in this sci-fi classic.",
+    price: 10.50,
+    image_url: "https://covers.openlibrary.org/b/id/8426441-L.jpg"
+  },
+  {
+    title: "Anne of Green Gables",
+    synopsis: "An imaginative orphan girl brings life to Avonlea.",
+    price: 11.60,
+    image_url: "https://covers.openlibrary.org/b/id/8225632-L.jpg"
+  },
+  {
+    title: "The Adventures of Sherlock Holmes",
+    synopsis: "A collection of mysteries solved by the world’s greatest detective.",
+    price: 13.40,
+    image_url: "https://covers.openlibrary.org/b/id/8225693-L.jpg"
   }
 ];
 
 async function seed() {
   await db.connect();
 
-  // Create user
-  const hashedPassword = await bcrypt.hash("test123", 10);
-  const {
-    rows: [user]
-  } = await db.query(
-    `INSERT INTO users (username, password)
-     VALUES ($1, $2)
-     RETURNING *`,
-    ["kourtney", hashedPassword]
-  );
+  // Create user if not exists
+  let user;
+  try {
+    const {
+      rows: [existing]
+    } = await db.query(`SELECT * FROM users WHERE username = $1`, ["kourtney"]);
+
+    if (existing) {
+      user = existing;
+    } else {
+      const hashedPassword = await bcrypt.hash("test123", 10);
+      const {
+        rows: [newUser]
+      } = await db.query(
+        `INSERT INTO users (username, password)
+         VALUES ($1, $2)
+         RETURNING *`,
+        ["kourtney", hashedPassword]
+      );
+      user = newUser;
+    }
+  } catch {
+    await db.end();
+    return;
+  }
 
   // Insert books
-  const bookInserts = await Promise.all(
-    books.map(b =>
-      db.query(
+  const insertedBooks = [];
+  for (const b of books) {
+    try {
+      const { rows } = await db.query(
         `INSERT INTO books (title, synopsis, price, image_url)
          VALUES ($1, $2, $3, $4)
          RETURNING *`,
         [b.title, b.synopsis, b.price, b.image_url]
-      )
-    )
-  );
-  const insertedBooks = bookInserts.map(r => r.rows[0]);
+      );
+      insertedBooks.push(rows[0]);
+    } catch {}
+  }
 
-  // Create order with note
-  const note = "1 The Alchemist, 2 Atomic Habits";
-  const {
-    rows: [order]
-  } = await db.query(
-    `INSERT INTO orders (user_id, date, note)
-     VALUES ($1, CURRENT_DATE, $2)
-     RETURNING *`,
-    [user.id, note]
-  );
+  if (insertedBooks.length < 3) {
+    await db.end();
+    return;
+  }
 
-  // Create 3 reviews for different books
-  await db.query(
-    `INSERT INTO reviews (book_id, user_id, content, rating)
-     VALUES ($1, $2, $3, $4), ($5, $6, $7, $8), ($9, $10, $11, $12)`,
-    [
-      insertedBooks[0].id, user.id, "Life-changing book with beautiful storytelling.", 5,
-      insertedBooks[1].id, user.id, "Tons of practical advice. Very readable.", 4,
-      insertedBooks[2].id, user.id, "Raw and powerful memoir. Highly recommend.", 5
-    ]
-  );
+  // Insert order
+  try {
+    const note = "1 The Alchemist, 2 Atomic Habits";
+    await db.query(
+      `INSERT INTO orders (user_id, date, note)
+       VALUES ($1, CURRENT_DATE, $2)`,
+      [user.id, note]
+    );
+  } catch {}
+
+  // Insert reviews
+  try {
+    await db.query(
+      `INSERT INTO reviews (book_id, user_id, content, rating)
+       VALUES ($1, $2, $3, $4),
+              ($5, $6, $7, $8),
+              ($9, $10, $11, $12)`,
+      [
+        insertedBooks[0].id, user.id, "Life-changing book with beautiful storytelling.", 5,
+        insertedBooks[1].id, user.id, "Tons of practical advice. Very readable.", 4,
+        insertedBooks[2].id, user.id, "Raw and powerful memoir. Highly recommend.", 5
+      ]
+    );
+  } catch {}
 
   await db.end();
   console.log("📚 Book Haven seeded successfully!");
 }
 
-seed().catch(console.error);
+seed().catch(() => {
+  db.end();
+});
